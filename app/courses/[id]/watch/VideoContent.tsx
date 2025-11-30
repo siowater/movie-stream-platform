@@ -27,7 +27,7 @@ export default function VideoContent({
   return (
     <>
       {/* 動画プレーヤー */}
-      <div className="mb-6 animate-fade-in-up">
+      <div className="mb-6">
         <VideoPlayer
           youtubeVideoId={video.youtubeVideoId}
           onEnd={handleVideoEnd}

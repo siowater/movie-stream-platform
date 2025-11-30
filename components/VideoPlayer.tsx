@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface VideoPlayerProps {
   youtubeVideoId: string;
@@ -13,6 +13,19 @@ export default function VideoPlayer({
 }: VideoPlayerProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const onEndRef = useRef(onEnd);
+  // クライアント側でのみoriginを設定してハイドレーションエラーを回避
+  // 初期値はyoutubeVideoIdのみを含むURL（originなし）で、useEffectでoriginを追加
+  const [iframeSrc, setIframeSrc] = useState<string>(
+    `https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1`
+  );
+
+  // クライアント側でのみoriginを設定してハイドレーションエラーを回避
+  useEffect(() => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    setIframeSrc(
+      `https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&origin=${origin}`
+    );
+  }, [youtubeVideoId]);
 
   // onEndの参照を最新に保つ
   useEffect(() => {
@@ -48,11 +61,11 @@ export default function VideoPlayer({
     <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-black shadow-lg transition-all duration-300 hover:shadow-xl">
       <iframe
         ref={iframeRef}
-        src={`https://www.youtube.com/embed/${youtubeVideoId}?enablejsapi=1&origin=${typeof window !== "undefined" ? window.location.origin : ""}`}
+        src={iframeSrc}
         title="YouTube video player"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
-        className="absolute left-0 top-0 h-full w-full transition-opacity duration-300"
+        className="absolute left-0 top-0 h-full w-full"
       />
     </div>
   );
