@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // GitHub Pages用の設定
   output: "export",
-  basePath: process.env.NODE_ENV === "production" ? "/movie-stream-platform" : "",
+  basePath: process.env.GITHUB_PAGES === "true" ? "/movie-stream-platform" : "",
   trailingSlash: true,
   // 画像最適化の設定（静的エクスポートでは最適化を無効化）
   images: {
