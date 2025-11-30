@@ -20,7 +20,7 @@ export default function VideoContent({
 
   const handleVideoEnd = () => {
     if (nextVideo) {
-      router.push(`/courses/${courseId}/watch?video=${nextVideo.id}`);
+      router.push(`/courses/${courseId}/watch/${nextVideo.id}`);
     }
   };
 
@@ -49,7 +49,7 @@ export default function VideoContent({
       <div className="flex gap-4">
         {nextVideo ? (
           <Button
-            href={`/courses/${courseId}/watch?video=${nextVideo.id}`}
+            href={`/courses/${courseId}/watch/${nextVideo.id}`}
             size="lg"
           >
             次の動画へ →

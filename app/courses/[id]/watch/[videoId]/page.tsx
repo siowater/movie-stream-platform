@@ -1,24 +1,41 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
   getCourseById,
   getVideoById,
   getNextVideo,
+  getAllCourses,
 } from "@/lib/data/courses";
 import SectionList from "@/components/SectionList";
-import VideoContent from "./VideoContent";
+import VideoContent from "../VideoContent";
 
 interface WatchPageProps {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<{ video?: string }>;
+  params: Promise<{ id: string; videoId: string }>;
+}
+
+// 静的エクスポート用: すべてのコースと動画の組み合わせを生成
+export async function generateStaticParams() {
+  const courses = getAllCourses();
+  const params: { id: string; videoId: string }[] = [];
+
+  for (const course of courses) {
+    for (const section of course.sections) {
+      for (const video of section.videos) {
+        params.push({
+          id: course.id,
+          videoId: video.id,
+        });
+      }
+    }
+  }
+
+  return params;
 }
 
 export async function generateMetadata({
   params,
-  searchParams,
 }: WatchPageProps): Promise<Metadata> {
-  const { id: courseId } = await params;
-  const { video: videoId } = await searchParams;
+  const { id: courseId, videoId } = await params;
 
   const course = getCourseById(courseId);
   if (!course) {
@@ -27,7 +44,7 @@ export async function generateMetadata({
     };
   }
 
-  const videoData = videoId ? getVideoById(courseId, videoId) : null;
+  const videoData = getVideoById(courseId, videoId);
   const video = videoData?.video;
 
   if (video) {
@@ -43,34 +60,17 @@ export async function generateMetadata({
   };
 }
 
-export default async function WatchPage({
-  params,
-  searchParams,
-}: WatchPageProps) {
-  const { id: courseId } = await params;
-  const { video: videoId } = await searchParams;
+export default async function WatchPage({ params }: WatchPageProps) {
+  const { id: courseId, videoId } = await params;
 
   const course = getCourseById(courseId);
   if (!course) {
     notFound();
   }
 
-  // 動画IDが指定されていない場合、最初の動画にリダイレクト
-  if (!videoId) {
-    const firstVideo = course.sections[0]?.videos[0];
-    if (firstVideo) {
-      redirect(`/courses/${courseId}/watch?video=${firstVideo.id}`);
-    }
-  }
-
   // 動画情報を取得
-  const videoData = videoId ? getVideoById(courseId, videoId) : null;
+  const videoData = getVideoById(courseId, videoId);
   if (!videoData) {
-    // 動画が見つからない場合、最初の動画にリダイレクト
-    const firstVideo = course.sections[0]?.videos[0];
-    if (firstVideo) {
-      redirect(`/courses/${courseId}/watch?video=${firstVideo.id}`);
-    }
     notFound();
   }
 
@@ -102,3 +102,4 @@ export default async function WatchPage({
     </div>
   );
 }
+

@@ -1,12 +1,20 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getCourseById } from "@/lib/data/courses";
+import { getCourseById, getAllCourses } from "@/lib/data/courses";
 import { getFirstVideoId, getYouTubeThumbnail } from "@/lib/utils/youtube";
 import Button from "@/components/Button";
 
 interface CourseDetailPageProps {
   params: Promise<{ id: string }>;
+}
+
+// 静的エクスポート用: すべてのコースIDを生成
+export async function generateStaticParams() {
+  const courses = getAllCourses();
+  return courses.map((course) => ({
+    id: course.id,
+  }));
 }
 
 export async function generateMetadata({
@@ -73,7 +81,7 @@ export default async function CourseDetailPage({
   const firstVideoId =
     course.sections[0]?.videos[0]?.id || null;
   const watchUrl = firstVideoId
-    ? `/courses/${course.id}/watch?video=${firstVideoId}`
+    ? `/courses/${course.id}/watch/${firstVideoId}`
     : `/courses/${course.id}/watch`;
 
   // YouTubeサムネイルを取得

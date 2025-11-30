@@ -95,7 +95,7 @@ export default function SectionList({
                     return (
                       <li key={video.id}>
                         <Link
-                          href={`/courses/${courseId}/watch?video=${video.id}`}
+                          href={`/courses/${courseId}/watch/${video.id}`}
                           className={`flex items-center gap-2 rounded px-2 py-1.5 text-sm transition-all duration-200 ${
                             isCurrentVideo
                               ? "bg-blue-100 text-blue-700 font-medium shadow-sm"
