@@ -92,6 +92,7 @@ export default async function WatchPage({
       <main className="flex flex-1 flex-col overflow-y-auto bg-gray-50">
         <div className="mx-auto w-full max-w-5xl p-4 lg:p-8">
           <VideoContent
+            key={video.id}
             video={video}
             courseId={courseId}
             nextVideo={nextVideo}

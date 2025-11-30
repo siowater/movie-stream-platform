@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Course, Video } from "@/types";
 
 interface SectionListProps {
@@ -24,6 +24,17 @@ export default function SectionList({
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(currentSectionId ? [currentSectionId] : [])
   );
+
+  // currentVideoIdが変更されたときに、現在のセクションを展開状態にする
+  useEffect(() => {
+    if (currentSectionId) {
+      setExpandedSections((prev) => {
+        const newSet = new Set(prev);
+        newSet.add(currentSectionId);
+        return newSet;
+      });
+    }
+  }, [currentVideoId, currentSectionId]);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections((prev) => {

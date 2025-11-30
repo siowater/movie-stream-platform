@@ -29,6 +29,7 @@ export default function VideoContent({
       {/* 動画プレーヤー */}
       <div className="mb-6">
         <VideoPlayer
+          key={video.youtubeVideoId}
           youtubeVideoId={video.youtubeVideoId}
           onEnd={handleVideoEnd}
         />
