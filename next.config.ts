@@ -1,8 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 画像最適化の設定
+  // GitHub Pages用の設定
+  output: "export",
+  basePath: process.env.NODE_ENV === "production" ? "/movie-stream-platform" : "",
+  trailingSlash: true,
+  // 画像最適化の設定（静的エクスポートでは最適化を無効化）
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
